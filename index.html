@@ -27,6 +27,15 @@ h1{font-size:16px;letter-spacing:1px}
 .pill.working{color:var(--buy)}.pill.alert{color:var(--avoid)}.pill.waiting,.pill.idle{color:var(--mut)}
 .msg{font-size:10px;color:var(--ink);margin-top:3px;text-align:center;min-height:28px}
 .bot{width:56px;height:56px;image-rendering:pixelated;shape-rendering:crispEdges}
+.walker{width:56px;height:56px;animation:walk 6s linear infinite}
+.walker.working{animation-duration:5s}.walker.idle{animation-duration:9s}.walker.waiting{animation-duration:14s}
+.walker.alert{animation:none}
+.walker svg{display:block}
+@keyframes walk{0%{transform:translateX(-34px) scaleX(1)}49%{transform:translateX(34px) scaleX(1)}50%{transform:translateX(34px) scaleX(-1)}99%{transform:translateX(-34px) scaleX(-1)}100%{transform:translateX(-34px) scaleX(1)}}
+.leg.l0{animation:step .5s steps(1) infinite}
+.leg.l1{animation:step .5s steps(1) infinite reverse}
+@keyframes step{0%{opacity:1}50%{opacity:0}}
+.walker.waiting .leg{animation-duration:1s}.walker.alert .leg{animation:none}.walker.alert .leg.l1{opacity:0}
 .bot.working{animation:bob .6s steps(2) infinite}
 .bot.alert{animation:shake .25s steps(2) infinite}
 .bot.idle{animation:bob 1.6s steps(2) infinite}
@@ -40,6 +49,27 @@ h3{font-size:12px;margin:16px 0 6px;color:var(--mut);text-transform:uppercase}
 .card small{color:var(--mut);display:block}
 .tag{font-weight:bold;padding:2px 6px;border:2px solid var(--line);color:#111}
 .tag.BUY{background:var(--buy)}.tag.WATCH{background:var(--watch)}.tag.AVOID{background:var(--avoid)}
+.meet{grid-column:1/-1;min-height:190px;justify-content:flex-start;padding-top:26px;background:linear-gradient(#3a2d63 0 58%,#5a4630 58% 100%)}
+.table{position:absolute;left:12%;right:12%;bottom:34px;height:16px;background:#7a5a3a;border:3px solid var(--line)}
+.seats{display:flex;justify-content:space-around;width:100%;margin-top:64px;position:relative;z-index:1}
+.seat{text-align:center;font-size:9px;color:var(--mut)}
+.seat .walker{animation:none;margin:auto}
+.seat.active{animation:up 12s steps(1) infinite}
+@keyframes up{0%{transform:translateY(-8px);color:#fff}25%{transform:none}100%{transform:none}}
+.says{position:absolute;top:24px;left:8px;right:8px;height:46px}
+.says .bub{position:absolute;inset:0 0 auto 0;margin:0;opacity:0;animation:talk 12s steps(1) infinite}
+@keyframes talk{0%{opacity:1}25%{opacity:0}100%{opacity:0}}
+.stage{position:relative;width:56px;height:56px}
+.stage .walker{animation:none}
+.prop{position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);width:54px;image-rendering:pixelated;shape-rendering:crispEdges;z-index:2}
+.scr{animation:scr 1s steps(2) infinite}
+@keyframes scr{50%{opacity:.35}}
+.coin{animation:coin .8s steps(2) infinite}
+@keyframes coin{50%{transform:translateY(-1px)}}
+.wave{animation:wave .9s steps(3) infinite}.wave.w2{animation-delay:.3s}.wave.w3{animation-delay:.6s}
+@keyframes wave{0%{opacity:0}40%{opacity:1}100%{opacity:0}}
+.poster{position:absolute;top:22px;right:8px;background:#f472b6;color:#1b1630;border:3px solid var(--line);font-size:10px;font-weight:bold;padding:1px 5px;transform:rotate(4deg)}
+.away{color:var(--mut);font-size:10px;text-align:center;margin-bottom:46px}
 .bub{position:relative;background:#f3eefc;color:#1b1630;border:3px solid var(--line);padding:4px 6px;font-size:10px;line-height:1.3;margin-bottom:8px;max-width:100%;text-align:left}
 .bub:after{content:"";position:absolute;left:50%;bottom:-9px;margin-left:-5px;border:5px solid transparent;border-top-color:var(--line)}
 .rapat{background:var(--wall);border:3px solid var(--line);padding:8px 10px;margin-bottom:6px}
@@ -61,34 +91,51 @@ h3{font-size:12px;margin:16px 0 6px;color:var(--mut);text-transform:uppercase}
 <p class="foot" id="foot"></p>
 <script>
 const BOT=[
-"....kkkkkk....",
-"...kBBBBBBk...",
-"..kBBBBBBBBk..",
-"..kBwwBBwwBk..",
-"..kBwEBBwEBk..",
-"..kBBBBBBBBk..",
-"..kBBkkkkBBk..",
-"...kBBBBBBk...",
-"....kkkkkk....",
-"...kCCCCCCk...",
-"..kCCCCCCCCk..",
-"..kCCCCCCCCk..",
-"...kkCkkCkk...",
-"...kk....kk..."];
+"..kkk......kkk..",
+".kwwwk....kwwwk.",
+".kwEwk....kwEwk.",
+".kBBBkkkkkkBBBk.",
+".kBBBBBBBBBBBBk.",
+".kBBBBBBBBBBBBk.",
+".kBBkkkkkkkkBBk.",
+".kBCCCCCCCCCCBk.",
+"kBBCCCCCCCCCCBBk",
+"kBBkCCCCCCCCkBBk",
+"kBBk.kBBBBk.kBBk",
+"kkkk.kkkkkk.kkkk",
+"....kBBBBBBk....",
+"...kBBk..kBBk...",
+"..kBBBk..kBBBk.."];
+const LEGS=["..kkkkk.........",".........kkkkk.."];
 const ROOMS=[
- ["price","Harga","#38bdf8","#0ea5e9"],
- ["safety","Keamanan","#f87171","#dc2626"],
- ["analyst","Analis","#a78bfa","#7c3aed"],
- ["wallet","Dompet","#fbbf24","#d97706"],
- ["trader","Trader","#4ade80","#16a34a"],
- ["ledger","Pembukuan","#f472b6","#db2777"]];
-function bot(c1,c2,mood){
-  const col={k:"#0e0a1c",B:c1,C:c2,w:"#fff",E:mood==="alert"?"#ef4444":"#0e0a1c"};
+ ["price","Harga","#38bdf8","#0ea5e9","Paijo",0],
+ ["safety","Keamanan","#f87171","#dc2626","Ijem",1],
+ ["analyst","Analis","#a78bfa","#7c3aed","Painem",1],
+ ["wallet","Dompet","#fbbf24","#d97706","",0],
+ ["trader","Trader","#4ade80","#16a34a","Sobri",0],
+ ["ledger","Marketing","#f472b6","#db2777","",1]];
+function tint(h,a){const n=parseInt(h.slice(1),16);const f=c=>Math.round(c+(255-c)*a).toString(16).padStart(2,"0");return "#"+f(n>>16)+f((n>>8)&255)+f(n&255)}
+function bot(c1,c2,mood,girl){
+  const col={k:"#0e0a1c",B:c1,C:tint(c1,.55),w:"#fff",E:mood==="alert"?"#ef4444":"#0e0a1c"};
   let r="";
   BOT.forEach((row,y)=>[...row].forEach((ch,x)=>{
     if(ch==="."||!col[ch])return;
     r+=`<rect x="${x}" y="${y}" width="1" height="1" fill="${col[ch]}"${ch==="E"?' class="eye"':''}/>`;}));
-  return `<svg class="bot ${mood}" viewBox="0 0 14 14">${r}</svg>`;
+  if(girl){const H="#b45309";r+=R(7,1,2,2,H)+R(7,0,2,1,"#f472b6")+R(6,0,1,1,"#ec4899")+R(9,0,1,1,"#ec4899")+R(0,3,1,5,H)+R(15,3,1,5,H);}
+  const legs=LEGS.map((row,i)=>`<g class="leg l${i}">`+[...row].map((ch,x)=>ch==="k"?`<rect x="${x}" y="15" width="1" height="1" fill="#0e0a1c"/>`:"").join("")+`</g>`).join("");
+  return `<div class="walker ${mood}"><svg class="bot ${mood}" viewBox="0 0 16 16">${r}${legs}</svg></div>`;
+}
+
+function R(x,y,w,h,c,cls){return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c}"${cls?` class="${cls}"`:""}/>`}
+function laptop(inner){return `<svg class="prop" viewBox="0 0 20 12">${R(2,0,16,8,"#cbd5e1")}${R(3,1,14,6,"#0b1220")}<g class="scr">${inner}</g>${R(0,8,20,2,"#94a3b8")}${R(8,9,4,1,"#64748b")}</svg>`}
+function prop(k,mood){
+  if(k==="price")return laptop([[4,5],[6,4],[8,5],[10,3],[12,4],[14,2]].map(a=>R(a[0],a[1],2,1,"#38bdf8")).join(""));
+  if(k==="safety")return laptop(mood==="alert"?R(10,2,1,3,"#f87171")+R(10,6,1,1,"#f87171"):R(8,2,5,3,"#4ade80")+R(9,5,3,1,"#4ade80")+R(10,6,1,1,"#4ade80"));
+  if(k==="analyst")return laptop(R(5,5,2,1,"#a78bfa")+R(8,3,2,3,"#a78bfa")+R(11,4,2,2,"#a78bfa")+R(14,2,2,4,"#a78bfa"));
+  if(k==="trader")return laptop(R(5,3,1,3,"#4ade80")+R(8,2,1,4,"#f87171")+R(11,4,1,2,"#4ade80")+R(14,2,1,4,"#4ade80"));
+  if(k==="wallet")return `<svg class="prop" viewBox="0 0 20 12"><g class="coin">${R(7,0,3,2,"#fbbf24")}${R(11,1,3,2,"#fbbf24")}</g>${R(3,4,14,3,"#a16207")}${R(3,7,14,5,"#78350f")}${R(9,6,2,2,"#fbbf24")}${R(3,4,14,1,"#0e0a1c")}</svg>`;
+  if(k==="ledger")return `<svg class="prop" viewBox="0 0 22 12">${R(1,5,3,3,"#fbbf24")}${R(4,4,3,5,"#fbbf24")}${R(7,3,3,7,"#f59e0b")}${R(10,2,3,9,"#f59e0b")}${R(2,8,2,3,"#92400e")}${R(14,4,1,5,"#fde68a","wave")}${R(16,3,1,7,"#fde68a","wave w2")}${R(18,2,1,9,"#fde68a","wave w3")}</svg>`;
+  return "";
 }
 const fmt=n=>n>=1000?"$"+n.toLocaleString("en-US",{maximumFractionDigits:0}):"$"+(+n).toPrecision(4).replace(/\.?0+$/,"");
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -96,10 +143,10 @@ const $=id=>document.getElementById(id);
 const DEMO={v:3,t:0,mode:"paper",eq:1042.5,cash:700,pnl:4.25,
  pos:[["NEAR",5.1,5.4,5.9,342.5]],
  tok:[["BNB","WATCH",68,612.3,95,0,9e8,1.2],["NEAR","BUY",78,5.4,95,0,2e8,3.1],["PI","AVOID",41,0.21,90,0,1e7,-6.2]],
- chat:{sym:"NEAR",v:"SETUJU",l:[["price","NEAR naik 3% dengan volume sehat."],["safety","Aset utama, tidak ada bendera merah."],["analyst","Skor 78, saya condong BUY."],["trader","Oke, beli kecil saja."]]},
+ chat:{sym:"NEAR",ts:0,v:"SETUJU",l:[["price","NEAR naik 3% dengan volume sehat."],["safety","Aset utama, tidak ada bendera merah."],["analyst","Skor 78, saya condong BUY."],["trader","Oke, beli kecil saja."]]},
  ag:{price:["working","3/3 aset terpantau"],safety:["working","Tidak ada bendera merah"],
  analyst:["working","1 BUY | 1 WATCH | 1 AVOID"],wallet:["idle","Saldo 0.00000 ETH"],
- trader:["working","1 posisi | PnL +4.3%"],ledger:["idle","Ekuitas $1,043"]}};
+ trader:["working","1 posisi | PnL +4.3%"],ledger:["working","Umumkan 1 sinyal BUY"]}};
 async function decode(s){
   const b=s.replace(/-/g,"+").replace(/_/g,"/");
   const bin=atob(b+"=".repeat((4-b.length%4)%4));
@@ -114,12 +161,26 @@ function render(d,demo){
   const sg=(n,p)=>(n>=0?"+":"")+n.toFixed(2)+(p?"%":"");
   $("eq").textContent=fmt(d.eq);$("cash").textContent=fmt(d.cash);
   $("pnl").textContent=sg(d.pnl,1);$("pnl").className=d.pnl>=0?"up":"dn";
-  $("house").innerHTML=ROOMS.map(([k,name,c1,c2])=>{
+  const L=(d.chat&&d.chat.l)||[];
+  const live=d.chat&&((d.t||0)-(d.chat.ts||0))<600;
+  const nmm={price:"Paijo",safety:"Ijem",analyst:"Painem",trader:"Sobri"};
+  const home=ROOMS.map(([k,name,c1,c2,who,girl])=>{
     const [mood,txt]=(d.ag||{})[k]||["waiting","menunggu data"];
     const lbl={working:"BEKERJA",alert:"WASPADA",idle:"SANTAI",waiting:"MENUNGGU"}[mood]||"MENUNGGU";
-    const say=((d.chat&&d.chat.l)||[]).find(x=>x[0]===k);
-    return `<div class="room"><h2>${name}</h2>${say?`<div class="bub">${esc(say[1])}</div>`:""}${bot(c1,c2,mood)}<span class="pill ${mood}">${lbl}</span><div class="msg">${esc(txt)}</div></div>`;}).join("");
-  const nm={price:"Harga",safety:"Keamanan",analyst:"Analis",trader:"Trader"};
+    if(live&&nmm[k]) return `<div class="room"><h2>${who?who+" · ":""}${name}</h2><div class="away">🚪 sedang rapat</div><span class="pill idle">DI RUANG RAPAT</span><div class="msg">&nbsp;</div></div>`;
+    const sit=mood==="working"||mood==="alert";
+    const fig=sit?`<div class="stage">${bot(c1,c2,mood,girl)}${prop(k,mood)}</div>`:bot(c1,c2,mood,girl);
+    const post=(k==="ledger"&&mood==="working")?'<div class="poster">📣 BUY!</div>':"";
+    return `<div class="room"><h2>${who?who+" · ":""}${name}</h2>${post}${fig}<span class="pill ${mood}">${lbl}</span><div class="msg">${esc(txt)}</div></div>`;}).join("");
+  let meet="";
+  if(live){
+    const seats=L.map((x,i)=>{const r=ROOMS.find(q=>q[0]===x[0])||ROOMS[0];
+      return `<div class="seat" style="animation:up 12s steps(1) infinite;animation-delay:${i*3}s">${bot(r[2],r[3],"idle",r[5])}<div>${nmm[x[0]]||x[0]}</div></div>`;}).join("");
+    const says=L.map((x,i)=>`<div class="bub" style="animation-delay:${i*3}s"><b>${nmm[x[0]]||x[0]}:</b> ${esc(x[1])}</div>`).join("");
+    meet=`<div class="room meet"><h2>Ruang rapat: ${esc(d.chat.sym)}</h2><div class="says">${says}</div><div class="seats">${seats}</div><div class="table"></div></div>`;
+  }
+  $("house").innerHTML=home+meet;
+  const nm={price:"Paijo (Harga)",safety:"Ijem (Keamanan)",analyst:"Painem (Analis)",trader:"Sobri (Trader)"};
   $("rapatwrap").innerHTML=d.chat?`<h3>Rapat agen: ${esc(d.chat.sym)}</h3><div class="rapat">${d.chat.l.map(x=>`<p><b>${nm[x[0]]||x[0]}:</b> ${esc(x[1])}</p>`).join("")}<p><b>${d.chat.v==="SETUJU"?"✅ Disetujui":"⛔ Ditolak"}</b></p></div>`:"";
   $("pos").innerHTML=(d.pos||[]).length?d.pos.map(p=>`<div class="card"><div><b>${esc(p[0])}</b><small>masuk ${p[1]} → ${p[2]}</small></div><div class="${p[3]>=0?"up":"dn"}">${sg(p[3],1)}<small>${fmt(p[4])}</small></div></div>`).join(""):'<div class="empty">Belum ada posisi terbuka.</div>';
   $("tok").innerHTML=(d.tok||[]).length?d.tok.map(t=>`<div class="card"><div><b>${esc(t[0])}</b><small>${fmt(t[3])} · 24j ${t[7]>=0?"+":""}${t[7]}%${t[4]>=0?" · aman "+t[4]:""}</small></div><span class="tag ${esc(t[1])}">${esc(t[1])} ${t[2]}</span></div>`).join(""):'<div class="empty">Belum ada data. Tunggu siklus pertama bot lalu ketik /app lagi.</div>';
