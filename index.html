@@ -2,312 +2,134 @@
 <html lang="id">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Agent Onchain</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Rumah Agent</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-:root{--bg:#0b1220;--card:#131c2e;--line:#22304a;--text:#e8eefc;--mut:#8fa1c4;
---buy:#2ecc71;--watch:#f5c542;--avoid:#ff5d5d;--acc:#5aa9ff}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);
-font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
-padding:16px 16px 48px;max-width:520px;margin:0 auto}
-.hero{display:flex;align-items:center;gap:12px;margin-bottom:14px}
-#bot{width:104px;height:104px;flex:none}
-.bubble{background:var(--card);border:1px solid var(--line);border-radius:16px;
-padding:12px 14px;position:relative;flex:1}
-.bubble:before{content:"";position:absolute;left:-7px;top:26px;width:12px;height:12px;
-background:var(--card);border-left:1px solid var(--line);border-bottom:1px solid var(--line);
-transform:rotate(45deg)}
-.bubble b{display:block;font-size:16px;margin-bottom:2px}
-.bubble span{color:var(--mut);font-size:13px}
-.bar{display:flex;gap:8px;margin:12px 0}
-.bar input{flex:1;min-width:0;background:var(--card);border:1px solid var(--line);color:var(--text);
-border-radius:12px;padding:11px 12px;font-size:14px}
-button{background:var(--acc);color:#04101f;border:0;border-radius:12px;padding:0 14px;
-font-weight:600;font-size:14px;min-height:42px}
-button.ghost{background:var(--card);color:var(--text);border:1px solid var(--line)}
-.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px}
-.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.sym{font-size:18px;font-weight:700}
-.badge{font-weight:700;font-size:13px;padding:4px 10px;border-radius:999px;color:#04101f}
-.BUY{background:var(--buy)}.WATCH{background:var(--watch)}.AVOID{background:var(--avoid)}
-.price{font-size:22px;font-weight:700;margin:6px 0}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;color:var(--mut);font-size:13px}
-.grid b{color:var(--text);font-weight:600}
-.meter{height:6px;background:var(--line);border-radius:6px;margin:10px 0 6px;overflow:hidden}
-.meter i{display:block;height:100%;border-radius:6px}
-ul{margin:8px 0 0;padding-left:18px;color:var(--mut);font-size:13px}
-li{margin:2px 0}
-li.red{color:var(--avoid)}
-.foot{display:flex;justify-content:space-between;margin-top:10px;font-size:12px;color:var(--mut)}
-.link{color:var(--acc);text-decoration:none}
-.x{background:none;border:0;color:var(--mut);padding:0;min-height:0;font-weight:400;font-size:12px}
-.note{color:var(--mut);font-size:12px;text-align:center;margin-top:18px}
-/* robot */
-.float{animation:float 3s ease-in-out infinite;transform-origin:60px 60px}
-@keyframes float{50%{transform:translateY(-4px)}}
-.head{fill:#2a3a5c}.body{fill:#22304a}
-.eye{fill:var(--acc);transform-box:fill-box;transform-origin:center;animation:blink 4s infinite}
-@keyframes blink{0%,94%,100%{transform:scaleY(1)}97%{transform:scaleY(.1)}}
-.ant{fill:var(--acc);animation:pulse 1.6s infinite}
-@keyframes pulse{50%{opacity:.35}}
-#bot[data-mood=happy] .eye{fill:var(--buy)}#bot[data-mood=happy] .ant{fill:var(--buy)}
-#bot[data-mood=happy] .float{animation:hop .9s ease-in-out infinite}
-@keyframes hop{50%{transform:translateY(-9px)}}
-#bot[data-mood=watch] .eye{fill:var(--watch)}#bot[data-mood=watch] .ant{fill:var(--watch)}
-#bot[data-mood=alert] .eye{fill:var(--avoid)}#bot[data-mood=alert] .ant{fill:var(--avoid);animation-duration:.5s}
-#bot[data-mood=alert] .float{animation:shake .35s linear infinite}
-@keyframes shake{25%{transform:translateX(-2px)}75%{transform:translateX(2px)}}
-#bot[data-mood=scan] .eyes{animation:look 1.4s ease-in-out infinite}
-@keyframes look{0%,100%{transform:translateX(-4px)}50%{transform:translateX(4px)}}
+:root{--bg:#1b1630;--wall:#2a2347;--wall2:#332a57;--floor:#4a3a2c;--floor2:#3d2f24;--ink:#f3eefc;--mut:#9d93c4;
+--buy:#4ade80;--watch:#fbbf24;--avoid:#f87171;--line:#0e0a1c;--acc:#7dd3fc}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--ink);font:13px/1.4 ui-monospace,Menlo,Consolas,monospace;padding:12px 16px calc(24px + env(safe-area-inset-bottom));max-width:560px;margin:auto}
+h1{font-size:16px;letter-spacing:1px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.badge{font-size:10px;padding:3px 7px;border:2px solid var(--line);background:var(--wall2);color:var(--acc)}
+.badge.demo{color:var(--watch)}
+.sum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.sum div{background:var(--wall);border:3px solid var(--line);padding:8px;text-align:center}
+.sum b{display:block;font-size:15px;margin-top:2px}
+.up{color:var(--buy)}.dn{color:var(--avoid)}
+.house{border:4px solid var(--line);background:var(--line);display:grid;grid-template-columns:1fr 1fr;gap:4px;box-shadow:0 0 0 3px #5b4a8a}
+.roof{height:22px;background:repeating-linear-gradient(90deg,#8b3a4a 0 16px,#a14658 16px 32px);border:4px solid var(--line);border-bottom:0;margin:0 -4px}
+.room{background:linear-gradient(var(--wall) 0 62%,var(--floor) 62% 100%);position:relative;padding:8px;min-height:150px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end}
+.room:nth-child(4n+2),.room:nth-child(4n+3){background:linear-gradient(var(--wall2) 0 62%,var(--floor2) 62% 100%)}
+.room h2{position:absolute;top:6px;left:8px;font-size:10px;color:var(--mut);text-transform:uppercase}
+.pill{font-size:10px;padding:2px 7px;border:2px solid var(--line);background:#14102a;margin-top:4px;max-width:100%;text-align:center}
+.pill.working{color:var(--buy)}.pill.alert{color:var(--avoid)}.pill.waiting,.pill.idle{color:var(--mut)}
+.msg{font-size:10px;color:var(--ink);margin-top:3px;text-align:center;min-height:28px}
+.bot{width:56px;height:56px;image-rendering:pixelated;shape-rendering:crispEdges}
+.bot.working{animation:bob .6s steps(2) infinite}
+.bot.alert{animation:shake .25s steps(2) infinite}
+.bot.idle{animation:bob 1.6s steps(2) infinite}
+.bot.waiting{animation:bob 2.4s steps(2) infinite;opacity:.8}
+@keyframes bob{50%{transform:translateY(-4px)}}
+@keyframes shake{50%{transform:translateX(3px)}}
+.eye{animation:blink 3.2s steps(1) infinite}
+@keyframes blink{95%{opacity:0}}
+h3{font-size:12px;margin:16px 0 6px;color:var(--mut);text-transform:uppercase}
+.card{background:var(--wall);border:3px solid var(--line);padding:8px 10px;margin-bottom:6px;display:flex;justify-content:space-between;gap:8px;align-items:center}
+.card small{color:var(--mut);display:block}
+.tag{font-weight:bold;padding:2px 6px;border:2px solid var(--line);color:#111}
+.tag.BUY{background:var(--buy)}.tag.WATCH{background:var(--watch)}.tag.AVOID{background:var(--avoid)}
+.bub{position:relative;background:#f3eefc;color:#1b1630;border:3px solid var(--line);padding:4px 6px;font-size:10px;line-height:1.3;margin-bottom:8px;max-width:100%;text-align:left}
+.bub:after{content:"";position:absolute;left:50%;bottom:-9px;margin-left:-5px;border:5px solid transparent;border-top-color:var(--line)}
+.rapat{background:var(--wall);border:3px solid var(--line);padding:8px 10px;margin-bottom:6px}
+.rapat p{margin:3px 0}
+.empty{color:var(--mut);padding:8px 0}
+.foot{margin-top:16px;color:var(--mut);font-size:10px}
 </style>
 </head>
 <body>
-<div class="hero">
-  <svg id="bot" viewBox="0 0 120 120" data-mood="scan" aria-hidden="true">
-    <g class="float">
-      <line x1="60" y1="14" x2="60" y2="27" stroke="#5b6f99" stroke-width="3" stroke-linecap="round"/>
-      <circle class="ant" cx="60" cy="11" r="5"/>
-      <rect class="head" x="24" y="26" width="72" height="58" rx="20"/>
-      <rect x="33" y="36" width="54" height="32" rx="11" fill="#0b1220"/>
-      <g class="eyes">
-        <ellipse class="eye" cx="47" cy="52" rx="6" ry="7"/>
-        <ellipse class="eye" cx="73" cy="52" rx="6" ry="7"/>
-      </g>
-      <path id="mouth" d="M54 76 L66 76" stroke="#8fa1c4" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-      <rect class="body" x="36" y="88" width="48" height="24" rx="11"/>
-      <circle cx="60" cy="100" r="4" fill="#5b6f99"/>
-    </g>
-  </svg>
-  <div class="bubble"><b id="title">Memulai...</b><span id="sub">Agent sedang bersiap</span></div>
+<div class="top"><h1>🏠 RUMAH AGENT</h1><span id="badge" class="badge">...</span></div>
+<div class="sum">
+  <div>Ekuitas<b id="eq">-</b></div><div>Kas<b id="cash">-</b></div><div>PnL<b id="pnl">-</b></div>
 </div>
-
-<div class="bar">
-  <input id="addr" placeholder="Tempel alamat token Base (0x...)" autocomplete="off" autocapitalize="off" spellcheck="false">
-  <button id="add">Tambah</button>
-</div>
-<div class="bar" style="margin-top:-4px">
-  <button class="ghost" id="refresh" style="flex:1">Pindai ulang</button>
-</div>
-
-<div id="list"></div>
-<p class="note">Alat bantu analisis, bukan nasihat finansial. Skor tinggi tidak menjamin token aman. Data: DexScreener &amp; GoPlus (jaringan Base).</p>
-
+<div class="roof"></div>
+<div class="house" id="house"></div>
+<div id="rapatwrap"></div>
+<h3>Posisi simulasi</h3><div id="pos"></div>
+<h3>Aset dipantau</h3><div id="tok"></div>
+<p class="foot" id="foot"></p>
 <script>
-const tg = window.Telegram && window.Telegram.WebApp;
-try { if (tg) { tg.ready(); tg.expand(); tg.setBackgroundColor('#0b1220'); tg.setHeaderColor('#0b1220'); } } catch (e) {}
-
-const ADDR = /^0x[a-fA-F0-9]{40}$/;
-const DEFAULTS = [
-  '0x940181a94A35A4569E4529A3CDfB74e38FD98631',
-  '0x4ed4E862860beD51a9570b96d89aF5E1B0Efefed',
-  '0x532f27101965dd16442E59d40670FaF5eBB142E4'
-];
-const MIN_LIQ = 25000, MIN_VOL = 10000, MIN_AGE_H = 24;
-
-const store = {
-  get(k, d) { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch (e) { return d; } },
-  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
-};
-
-function currentList() {
-  const fromUrl = (new URLSearchParams(location.search).get('t') || '')
-    .split(',').map(s => s.trim()).filter(a => ADDR.test(a));
-  const saved = store.get('tokens', []);
-  const removed = new Set(store.get('removed', []).map(a => a.toLowerCase()));
-  const base = (fromUrl.length || saved.length) ? [...fromUrl, ...saved] : DEFAULTS;
-  const seen = new Set(), out = [];
-  for (const a of base) {
-    const k = a.toLowerCase();
-    if (!seen.has(k) && !removed.has(k)) { seen.add(k); out.push(a); }
-  }
-  return out;
+const BOT=[
+"....kkkkkk....",
+"...kBBBBBBk...",
+"..kBBBBBBBBk..",
+"..kBwwBBwwBk..",
+"..kBwEBBwEBk..",
+"..kBBBBBBBBk..",
+"..kBBkkkkBBk..",
+"...kBBBBBBk...",
+"....kkkkkk....",
+"...kCCCCCCk...",
+"..kCCCCCCCCk..",
+"..kCCCCCCCCk..",
+"...kkCkkCkk...",
+"...kk....kk..."];
+const ROOMS=[
+ ["price","Harga","#38bdf8","#0ea5e9"],
+ ["safety","Keamanan","#f87171","#dc2626"],
+ ["analyst","Analis","#a78bfa","#7c3aed"],
+ ["wallet","Dompet","#fbbf24","#d97706"],
+ ["trader","Trader","#4ade80","#16a34a"],
+ ["ledger","Pembukuan","#f472b6","#db2777"]];
+function bot(c1,c2,mood){
+  const col={k:"#0e0a1c",B:c1,C:c2,w:"#fff",E:mood==="alert"?"#ef4444":"#0e0a1c"};
+  let r="";
+  BOT.forEach((row,y)=>[...row].forEach((ch,x)=>{
+    if(ch==="."||!col[ch])return;
+    r+=`<rect x="${x}" y="${y}" width="1" height="1" fill="${col[ch]}"${ch==="E"?' class="eye"':''}/>`;}));
+  return `<svg class="bot ${mood}" viewBox="0 0 14 14">${r}</svg>`;
 }
-function addToken(a) {
-  const saved = store.get('tokens', []);
-  if (!saved.some(x => x.toLowerCase() === a.toLowerCase())) saved.push(a);
-  store.set('tokens', saved);
-  store.set('removed', store.get('removed', []).filter(x => x.toLowerCase() !== a.toLowerCase()));
+const fmt=n=>n>=1000?"$"+n.toLocaleString("en-US",{maximumFractionDigits:0}):"$"+(+n).toPrecision(4).replace(/\.?0+$/,"");
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const $=id=>document.getElementById(id);
+const DEMO={v:3,t:0,mode:"paper",eq:1042.5,cash:700,pnl:4.25,
+ pos:[["NEAR",5.1,5.4,5.9,342.5]],
+ tok:[["BNB","WATCH",68,612.3,95,0,9e8,1.2],["NEAR","BUY",78,5.4,95,0,2e8,3.1],["PI","AVOID",41,0.21,90,0,1e7,-6.2]],
+ chat:{sym:"NEAR",v:"SETUJU",l:[["price","NEAR naik 3% dengan volume sehat."],["safety","Aset utama, tidak ada bendera merah."],["analyst","Skor 78, saya condong BUY."],["trader","Oke, beli kecil saja."]]},
+ ag:{price:["working","3/3 aset terpantau"],safety:["working","Tidak ada bendera merah"],
+ analyst:["working","1 BUY | 1 WATCH | 1 AVOID"],wallet:["idle","Saldo 0.00000 ETH"],
+ trader:["working","1 posisi | PnL +4.3%"],ledger:["idle","Ekuitas $1,043"]}};
+async function decode(s){
+  const b=s.replace(/-/g,"+").replace(/_/g,"/");
+  const bin=atob(b+"=".repeat((4-b.length%4)%4));
+  const u=Uint8Array.from(bin,c=>c.charCodeAt(0));
+  const ds=new DecompressionStream("deflate");
+  const w=ds.writable.getWriter();w.write(u);w.close();
+  return JSON.parse(await new Response(ds.readable).text());
 }
-function removeToken(a) {
-  store.set('tokens', store.get('tokens', []).filter(x => x.toLowerCase() !== a.toLowerCase()));
-  const rm = store.get('removed', []); rm.push(a); store.set('removed', rm);
+function render(d,demo){
+  try{const tg=window.Telegram&&Telegram.WebApp;if(tg){tg.ready();tg.expand()}}catch(e){}
+  const bd=$("badge");bd.textContent=demo?"DEMO":"SIMULASI";bd.className="badge"+(demo?" demo":"");
+  const sg=(n,p)=>(n>=0?"+":"")+n.toFixed(2)+(p?"%":"");
+  $("eq").textContent=fmt(d.eq);$("cash").textContent=fmt(d.cash);
+  $("pnl").textContent=sg(d.pnl,1);$("pnl").className=d.pnl>=0?"up":"dn";
+  $("house").innerHTML=ROOMS.map(([k,name,c1,c2])=>{
+    const [mood,txt]=(d.ag||{})[k]||["waiting","menunggu data"];
+    const lbl={working:"BEKERJA",alert:"WASPADA",idle:"SANTAI",waiting:"MENUNGGU"}[mood]||"MENUNGGU";
+    const say=((d.chat&&d.chat.l)||[]).find(x=>x[0]===k);
+    return `<div class="room"><h2>${name}</h2>${say?`<div class="bub">${esc(say[1])}</div>`:""}${bot(c1,c2,mood)}<span class="pill ${mood}">${lbl}</span><div class="msg">${esc(txt)}</div></div>`;}).join("");
+  const nm={price:"Harga",safety:"Keamanan",analyst:"Analis",trader:"Trader"};
+  $("rapatwrap").innerHTML=d.chat?`<h3>Rapat agen: ${esc(d.chat.sym)}</h3><div class="rapat">${d.chat.l.map(x=>`<p><b>${nm[x[0]]||x[0]}:</b> ${esc(x[1])}</p>`).join("")}<p><b>${d.chat.v==="SETUJU"?"✅ Disetujui":"⛔ Ditolak"}</b></p></div>`:"";
+  $("pos").innerHTML=(d.pos||[]).length?d.pos.map(p=>`<div class="card"><div><b>${esc(p[0])}</b><small>masuk ${p[1]} → ${p[2]}</small></div><div class="${p[3]>=0?"up":"dn"}">${sg(p[3],1)}<small>${fmt(p[4])}</small></div></div>`).join(""):'<div class="empty">Belum ada posisi terbuka.</div>';
+  $("tok").innerHTML=(d.tok||[]).length?d.tok.map(t=>`<div class="card"><div><b>${esc(t[0])}</b><small>${fmt(t[3])} · 24j ${t[7]>=0?"+":""}${t[7]}%${t[4]>=0?" · aman "+t[4]:""}</small></div><span class="tag ${esc(t[1])}">${esc(t[1])} ${t[2]}</span></div>`).join(""):'<div class="empty">Belum ada data. Tunggu siklus pertama bot lalu ketik /app lagi.</div>';
+  $("foot").textContent=(demo?"Data contoh. Buka lewat /app di bot untuk data asli. ":"Update: "+new Date(d.t*1000).toLocaleString("id-ID")+". Ketik /app lagi untuk menyegarkan. ")+"Simulasi uang virtual, bukan nasihat finansial.";
 }
-
-/* ---------- data ---------- */
-async function getPrice(addr) {
-  try {
-    const r = await fetch('https://api.dexscreener.com/latest/dex/tokens/' + addr);
-    if (!r.ok) throw new Error(r.status);
-    const pairs = ((await r.json()).pairs || []).filter(p => p.chainId === 'base');
-    if (!pairs.length) return { ok: false, note: 'Tidak ada pair di Base' };
-    const p = pairs.reduce((a, b) => ((b.liquidity || {}).usd || 0) > ((a.liquidity || {}).usd || 0) ? b : a);
-    const tx = (p.txns || {}).h24 || {};
-    return {
-      ok: true, symbol: (p.baseToken || {}).symbol || '?',
-      price: +p.priceUsd || 0, liq: +(p.liquidity || {}).usd || 0,
-      vol: +(p.volume || {}).h24 || 0, ch1: +(p.priceChange || {}).h1 || 0,
-      ch24: +(p.priceChange || {}).h24 || 0, buys: tx.buys || 0, sells: tx.sells || 0,
-      ageH: p.pairCreatedAt ? (Date.now() - p.pairCreatedAt) / 3.6e6 : 0
-    };
-  } catch (e) { return { ok: false, note: 'Gagal ambil harga' }; }
-}
-
-async function getSafety(addr) {
-  try {
-    const r = await fetch('https://api.gopluslabs.io/api/v1/token_security/8453?contract_addresses=' + addr);
-    if (!r.ok) throw new Error(r.status);
-    const d = ((await r.json()).result || {})[addr.toLowerCase()];
-    if (!d) return { ok: false, warnings: ['Token belum terindeks GoPlus (tidak bisa diverifikasi)'], red: [] };
-    return evalSafety(d);
-  } catch (e) { return { ok: false, warnings: ['Gagal cek keamanan'], red: [] }; }
-}
-
-function evalSafety(d) {
-  const f = k => d[k] === '1', n = k => parseFloat(d[k] || 0) || 0;
-  let score = 100, fatal = false; const red = [], warnings = [];
-  const fatalC = {
-    is_honeypot: 'Honeypot (tidak bisa dijual)', cannot_sell_all: 'Tidak bisa jual semua token',
-    cannot_buy: 'Tidak bisa dibeli', owner_change_balance: 'Owner bisa mengubah saldo holder',
-    hidden_owner: 'Ada hidden owner', can_take_back_ownership: 'Owner bisa mengambil alih kembali',
-    selfdestruct: 'Kontrak bisa self-destruct'
-  };
-  for (const k in fatalC) if (f(k)) { red.push(fatalC[k]); fatal = true; score -= 40; }
-  const soft = {
-    is_mintable: ['Token bisa dicetak tambahan (mint)', 15], is_proxy: ['Kontrak proxy (bisa di-upgrade)', 10],
-    transfer_pausable: ['Transfer bisa dipause owner', 15], slippage_modifiable: ['Pajak bisa diubah owner', 15],
-    is_blacklisted: ['Ada fungsi blacklist', 10], trading_cooldown: ['Ada cooldown trading', 5],
-    external_call: ['Kontrak memanggil kontrak eksternal', 5]
-  };
-  for (const k in soft) if (f(k)) { warnings.push(soft[k][0]); score -= soft[k][1]; }
-  if (!f('is_open_source')) { warnings.push('Kode kontrak belum diverifikasi'); score -= 20; }
-  const bt = n('buy_tax'), st = n('sell_tax');
-  const pct = x => Math.round(x * 100) + '%';
-  if (st > .10 || bt > .10) { red.push(`Pajak tinggi (beli ${pct(bt)}, jual ${pct(st)})`); score -= 25; }
-  else if (st > .05 || bt > .05) { warnings.push(`Pajak lumayan (beli ${pct(bt)}, jual ${pct(st)})`); score -= 10; }
-  const holders = (d.holders || []).slice(0, 10);
-  const top10 = holders.reduce((s, h) => (h.is_contract === 1 || h.is_locked) ? s : s + (parseFloat(h.percent) || 0), 0);
-  if (top10 > .5) { red.push(`Top-10 holder menguasai ${pct(top10)} supply`); score -= 20; }
-  else if (top10 > .3) { warnings.push(`Top-10 holder menguasai ${pct(top10)} supply`); score -= 8; }
-  if (n('creator_percent') > .1) { warnings.push(`Creator masih pegang ${pct(n('creator_percent'))} supply`); score -= 10; }
-  if ((parseInt(d.holder_count) || 0) < 100) { warnings.push('Holder sangat sedikit (<100)'); score -= 10; }
-  return { ok: true, score: Math.max(0, Math.min(100, score)), red, warnings, fatal };
-}
-
-function decide(p, s) {
-  if (!s.ok) return { action: 'AVOID', score: 0, reasons: ['Keamanan tidak bisa diverifikasi: ' + s.warnings.join('; ')] };
-  if (s.fatal) return { action: 'AVOID', score: 0, reasons: ['FATAL: ' + s.red.join('; ')] };
-  if (!p.ok) return { action: 'AVOID', score: 0, reasons: [p.note || 'Data harga tidak tersedia'] };
-  const reasons = [...s.red.map(m => '!' + m), ...s.warnings];
-  let score = s.score * 0.5;
-  score += Math.min(20, p.liq / MIN_LIQ * 10);
-  if (p.liq < MIN_LIQ) reasons.push(`Likuiditas rendah ($${fmt(p.liq)}) -> rawan slippage / rug`);
-  score += Math.min(10, p.vol / MIN_VOL * 5);
-  if (p.vol < MIN_VOL) reasons.push(`Volume 24j rendah ($${fmt(p.vol)})`);
-  score += Math.min(10, p.ageH / (MIN_AGE_H * 7) * 10);
-  if (p.ageH < MIN_AGE_H) reasons.push(`Pair baru (${Math.round(p.ageH)} jam) -> risiko tinggi`);
-  const tx = p.buys + p.sells;
-  if (tx) {
-    const ratio = p.buys / tx;
-    score += (ratio >= .35 && ratio <= .65) ? 10 * (1 - Math.abs(ratio - .5) * 2) : 3;
-    if (ratio < .35) reasons.push('Penjualan jauh lebih dominan dari pembelian');
-  }
-  if (p.ch1 > 40 || p.ch24 > 150) { score -= 15; reasons.push('Pump terlalu tinggi -> rawan FOMO'); }
-  if (p.ch24 < -40) { score -= 10; reasons.push('Turun tajam dalam 24 jam'); }
-  score = Math.round(Math.max(0, Math.min(100, score)));
-  const sellPressure = tx > 0 && p.buys / tx < .4;
-  let action = 'AVOID';
-  if (score >= 75 && !s.red.length && p.liq >= MIN_LIQ && p.vol >= MIN_VOL && !sellPressure) action = 'BUY';
-  else if (score >= 50) action = 'WATCH';
-  return { action, score, reasons };
-}
-
-/* ---------- UI ---------- */
-const fmt = n => n >= 1e6 ? (n / 1e6).toFixed(2) + 'M' : n >= 1e3 ? (n / 1e3).toFixed(1) + 'K' : n.toFixed(0);
-const money = v => v >= 1 ? v.toLocaleString('en-US', { maximumFractionDigits: 4 })
-  : v === 0 ? '0' : v.toPrecision(4).replace(/0+$/, '');
-const COLOR = { BUY: 'var(--buy)', WATCH: 'var(--watch)', AVOID: 'var(--avoid)' };
-const MOUTH = { scan: 'M54 76 L66 76', happy: 'M48 72 Q60 86 72 72', watch: 'M50 76 L70 76', alert: 'M50 80 Q60 70 70 80' };
-
-function setMood(m, title, sub) {
-  document.getElementById('bot').dataset.mood = m;
-  document.getElementById('mouth').setAttribute('d', MOUTH[m]);
-  document.getElementById('title').textContent = title;
-  document.getElementById('sub').textContent = sub;
-}
-function el(tag, cls, text) {
-  const e = document.createElement(tag);
-  if (cls) e.className = cls;
-  if (text != null) e.textContent = text;
-  return e;
-}
-function stat(label, value) {
-  const d = el('div'); d.append(label + ' '); d.append(el('b', null, value)); return d;
-}
-
-function card(addr, p, s, d) {
-  const c = el('div', 'card');
-  const top = el('div', 'row');
-  top.append(el('span', 'sym', p.ok ? p.symbol : addr.slice(0, 8) + '...'), el('span', 'badge ' + d.action, d.action));
-  c.append(top);
-  if (p.ok) {
-    c.append(el('div', 'price', '$' + money(p.price)));
-    const g = el('div', 'grid');
-    g.append(stat('Likuiditas', '$' + fmt(p.liq)), stat('Volume 24j', '$' + fmt(p.vol)),
-      stat('Ubah 1j', (p.ch1 >= 0 ? '+' : '') + p.ch1.toFixed(1) + '%'),
-      stat('Ubah 24j', (p.ch24 >= 0 ? '+' : '') + p.ch24.toFixed(1) + '%'),
-      stat('Beli/Jual', p.buys + ' / ' + p.sells), stat('Keamanan', s.ok ? s.score + '/100' : 'n/a'));
-    c.append(g);
-  }
-  const m = el('div', 'meter'); const i = el('i');
-  i.style.width = d.score + '%'; i.style.background = COLOR[d.action]; m.append(i); c.append(m);
-  c.append(el('div', null, 'Skor kelayakan ' + d.score + '/100'));
-  if (d.reasons.length) {
-    const ul = el('ul');
-    d.reasons.slice(0, 8).forEach(r => ul.append(el('li', r[0] === '!' ? 'red' : '', r.replace(/^!/, ''))));
-    c.append(ul);
-  }
-  const foot = el('div', 'foot');
-  const a = el('a', 'link', 'Buka DexScreener');
-  a.href = 'https://dexscreener.com/base/' + addr; a.target = '_blank'; a.rel = 'noopener';
-  const x = el('button', 'x', 'Hapus');
-  x.onclick = () => { removeToken(addr); scan(); };
-  foot.append(a, x); c.append(foot);
-  return c;
-}
-
-let busy = false;
-async function scan() {
-  if (busy) return; busy = true;
-  const list = currentList(), box = document.getElementById('list');
-  box.replaceChildren();
-  if (!list.length) { setMood('watch', 'Belum ada token', 'Tempel alamat token di atas'); busy = false; return; }
-  setMood('scan', `Memindai ${list.length} token...`, 'Mengecek harga dan keamanan');
-  const tally = { BUY: 0, WATCH: 0, AVOID: 0 };
-  for (const a of list) {
-    const [p, s] = await Promise.all([getPrice(a), getSafety(a)]);
-    const d = decide(p, s);
-    tally[d.action]++;
-    box.append(card(a, p, s, d));
-    await new Promise(r => setTimeout(r, 300));
-  }
-  const sub = `${tally.BUY} BUY | ${tally.WATCH} WATCH | ${tally.AVOID} AVOID | ` +
-    new Date().toLocaleTimeString('id-ID');
-  if (tally.BUY) setMood('happy', 'Ada kandidat BUY', sub);
-  else if (tally.WATCH) setMood('watch', 'Pantau dulu', sub);
-  else setMood('alert', 'Hindari semuanya', sub);
-  busy = false;
-}
-
-document.getElementById('add').onclick = () => {
-  const inp = document.getElementById('addr'), v = inp.value.trim();
-  if (!ADDR.test(v)) { setMood('alert', 'Alamat tidak valid', 'Harus diawali 0x, total 42 karakter'); return; }
-  addToken(v); inp.value = ''; scan();
-};
-document.getElementById('refresh').onclick = scan;
-scan();
-setInterval(scan, 120000);
+(async()=>{
+  const s=new URLSearchParams(location.search).get("s");
+  try{ if(s) return render(await decode(s),false); }catch(e){}
+  render(DEMO,true);
+})();
 </script>
 </body>
 </html>
