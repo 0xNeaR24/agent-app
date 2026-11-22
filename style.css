@@ -109,3 +109,5 @@ h3{font-size:12px;margin:16px 0 6px;color:var(--mut);text-transform:uppercase}
 .btn{display:block;width:100%;margin-top:14px;padding:10px;font:inherit;font-size:11px;color:var(--ink);background:var(--wall2);border:3px solid var(--line);cursor:pointer}
 .loading{color:var(--mut);padding:8px 0;animation:blink 1s steps(2) infinite}
 @keyframes blink{50%{opacity:.4}}
+
+.three .prop.lap{visibility:hidden}
