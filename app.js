@@ -23,16 +23,16 @@ const ROOMS=[
  ["trader","Trader","#4ade80","#16a34a","Sobri",0],
  ["ledger","Marketing","#f472b6","#db2777","",1]];
 function tint0(h,a){const n=parseInt(h.slice(1),16);const f=c=>Math.round(c+(255-c)*a).toString(16).padStart(2,"0");return "#"+f(n>>16)+f((n>>8)&255)+f(n&255)}
-function bot(c1,c2,mood,girl){
+function bot(c1,c2,mood,girl,k){
   const col={k:"#0e0a1c",B:"#f9b4c4",D:"#f08fa8",e:mood==="alert"?"#ef4444":"#0e0a1c",h:c1,t:c2};
   const px=(row,y,cls)=>[...row].map((ch,x)=>col[ch]?`<rect x="${x}" y="${y}" width="1" height="1" fill="${col[ch]}"${cls&&ch==="e"?' class="eye"':''}/>`:"").join("");
   let r=BOT.map((row,y)=>px(row,y,1)).join("");
   if(girl)r+=R(6,0,1,1,"#ec4899")+R(7,0,2,1,"#f472b6")+R(9,0,1,1,"#ec4899")+R(5,4,1,1,"#0e0a1c")+R(10,4,1,1,"#0e0a1c");
   const legs=LEGS.map((row,i)=>`<g class="leg l${i}">${px(row,15)}</g>`).join("");
-  return `<div class="walker ${mood}" data-c1="${c1}" data-c2="${c2}" data-girl="${girl?1:0}"><svg class="bot ${mood}" viewBox="0 0 16 16">${r}${legs}</svg></div>`;
+  return `<div class="walker ${mood}" data-k="${k||""}" data-c1="${c1}" data-c2="${c2}" data-girl="${girl?1:0}"><svg class="bot ${mood}" viewBox="0 0 16 16">${r}${legs}</svg></div>`;
 }
 function R(x,y,w,h,c,cls){return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c}"${cls?` class="${cls}"`:""}/>`}
-function laptop(inner){return `<svg class="prop" viewBox="0 0 20 12">${R(2,0,16,8,"#cbd5e1")}${R(3,1,14,6,"#0b1220")}<g class="scr">${inner}</g>${R(0,8,20,2,"#94a3b8")}${R(8,9,4,1,"#64748b")}</svg>`}
+function laptop(inner){return `<svg class="prop lap" viewBox="0 0 20 12">${R(2,0,16,8,"#cbd5e1")}${R(3,1,14,6,"#0b1220")}<g class="scr">${inner}</g>${R(0,8,20,2,"#94a3b8")}${R(8,9,4,1,"#64748b")}</svg>`}
 function prop(k,mood){
   if(k==="price")return laptop([[4,5],[6,4],[8,5],[10,3],[12,4],[14,2]].map(a=>R(a[0],a[1],2,1,"#38bdf8")).join(""));
   if(k==="safety")return laptop(mood==="alert"?R(10,2,1,3,"#f87171")+R(10,6,1,1,"#f87171"):R(8,2,5,3,"#4ade80")+R(9,5,3,1,"#4ade80")+R(10,6,1,1,"#4ade80"));
@@ -123,16 +123,16 @@ function render(d,demo){
     const away=w==="meet"?"🚪 sedang rapat":w==="kitchen"?"☕ istirahat di dapur":"";
     const pill=w==="meet"?'<span class="pill idle">DI RUANG RAPAT</span>':w==="kitchen"?'<span class="pill idle">ISTIRAHAT</span>':`<span class="pill ${mood}">${lbl}</span>`;
     const post=(k==="ledger"&&here)?'<div class="poster">📣 BUY!</div>':"";
-    const pigs=here?`<div class="stage">${bot(c1,c2,mood,girl)}</div>`:"";
-    const scene=`<div class="scene">${chair(c1)}${pigs}${desk()}${propOn(k,mood,here)}</div>`;
+    const pigs=here?`<div class="stage">${bot(c1,c2,mood,girl,k)}</div>`:"";
+    const scene=`<div class="scene" data-k="${k}">${chair(c1)}${pigs}${desk()}${propOn(k,mood,here)}</div>`;
     return `<div class="room"><h2>${who?who+" · ":""}${name}</h2>${post}${away?`<div class="away">${away}</div>`:""}${scene}${pill}<div class="msg">${esc(txt)}</div></div>`;}).join("");
   const seatsHTML=SIT.map((k,i)=>{const r=ROOMS.find(q=>q[0]===k);
-    const pig=live?`<div class="stage">${bot(r[2],r[3],"idle",r[5])}</div>`:"";
+    const pig=live?`<div class="stage">${bot(r[2],r[3],"idle",r[5],k)}</div>`:"";
     return `<div class="mseat" style="left:${i*25}%" data-r="${k}">${chair(r[2])}${pig}${propOn(k,"working",live)}<div class="nm">${r[4]}</div></div>`;}).join("");
   const says=live?L.map(x=>`<div class="bub" data-r="${x[0]}"><b>${nmm[x[0]]||x[0]}:</b> ${esc(x[1])}</div>`).join(""):"";
   const meet=`<div class="room meet"><h2>Ruang rapat${live?": "+esc(d.chat.sym):" (kosong)"}</h2>${live?`<div class="says">${says}</div>`:""}<div class="mscene"><div class="mtable"></div>${seatsHTML}</div></div>`;
   const kids=ROOMS.filter(r=>where[r[0]]==="kitchen");
-  const kpigs=kids.map(r=>`<div class="kslot" data-r="${r[0]}">${bot(r[2],r[3],"idle",r[5]).replace('<div class="walker','<div data-mug="1" class="walker')}<div class="nm">${r[4]||r[1]}</div></div>`).join("");
+  const kpigs=kids.map(r=>`<div class="kslot" data-r="${r[0]}">${bot(r[2],r[3],"idle",r[5],r[0]).replace('<div class="walker','<div data-mug="1" class="walker')}<div class="nm">${r[4]||r[1]}</div></div>`).join("");
   const ksays=kids.map((r,i)=>`<div class="bub" data-r="${r[0]}"><b>${r[4]||r[1]}:</b> ${esc(pick(JOKE[r[0]],seed+i*7))}</div>`).join("");
   const kitchen=`<div class="room kitchen"><h2>Dapur · tempat istirahat</h2>${kids.length?`<div class="says">${ksays}</div>`:""}<div class="kscene"><div class="cbar"></div>${coffeeM().replace('class="kitem"','class="kitem" style="left:12%;top:-12px;width:24px"')}${mugs().replace('class="kitem"','class="kitem" style="left:40%;top:15px;width:36px"')}${plant().replace('class="kitem"','class="kitem" style="left:70%;top:-10px;width:22px"')}${kids.length?`<div class="kpigs">${kpigs}</div>`:'<div class="kempty">Dapur sepi, semua sedang bekerja</div>'}${ktable()}</div></div>`;
   $("house").innerHTML=home+kitchen+meet;
@@ -182,101 +182,4 @@ function notice(msg,info){const e=$("notice");if(!e)return;e.textContent=msg;e.c
     notice("Data tidak bisa dibaca ("+e.message+"). Menampilkan contoh. Ketik /app lagi di bot.");
     render(DEMO,true);
   }
-})();
-
-/* ===== Babi voxel 3D (Three.js). Jika gagal, tetap pakai babi pixel SVG. ===== */
-(function(){
-  if(!window.THREE){return}
-  let renderer;
-  try{renderer=new THREE.WebGLRenderer({canvas:document.getElementById("gl"),alpha:true,antialias:false,powerPreference:"low-power"})}catch(e){return}
-  if(!renderer||!renderer.getContext())return;
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
-  renderer.autoClear=false;renderer.setClearColor(0x000000,0);
-  const scene=new THREE.Scene();
-  scene.add(new THREE.AmbientLight(0xffffff,.6));
-  const dl=new THREE.DirectionalLight(0xffffff,.55);dl.position.set(10,20,25);scene.add(dl);
-  const cam=new THREE.PerspectiveCamera(30,1,1,200);cam.position.set(0,14,46);cam.lookAt(0,8.5,0);
-  const M=c=>new THREE.MeshLambertMaterial({color:c});
-  const pink=M(0xf9b4c4),dark=M(0xf08fa8),black=M(0x1a1226),cup=M(0x38bdf8),tie=M(0x0ea5e9),bow=M(0xf472b6),eyeM=M(0x1a1226),white=M(0xffffff),band=cup;
-  const bx=(w,h,d,m,x,y,z,par)=>{const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);(par||pig).add(o);return o};
-  const pig=new THREE.Group();scene.add(pig);
-  const body=new THREE.Group();pig.add(body);
-  bx(8,6,7,pink,0,6,0,body);                       // badan
-  bx(8,7,7,pink,0,11.5,1.5,body);                  // kepala
-  bx(4,3,2,dark,0,10.4,5.9,body);                  // moncong
-  bx(.9,.9,.4,black,-.9,10.4,7,body);bx(.9,.9,.4,black,.9,10.4,7,body); // lubang hidung
-  const eL=bx(1.2,1.5,.5,eyeM,-2.3,12.6,5.1,body),eR=bx(1.2,1.5,.5,eyeM,2.3,12.6,5.1,body);
-  bx(.5,.5,.3,white,-2.6,13.1,5.4,body);bx(.5,.5,.3,white,2.0,13.1,5.4,body);
-  const earL=bx(2.2,2.6,1,pink,-3.3,15.7,.5,body),earR=bx(2.2,2.6,1,pink,3.3,15.7,.5,body);
-  earL.rotation.z=.35;earR.rotation.z=-.35;
-  bx(1,1.2,.5,dark,-3.3,15.6,1.1,body).rotation.z=.35;bx(1,1.2,.5,dark,3.3,15.6,1.1,body).rotation.z=-.35;
-  bx(8.8,1,1.6,band,0,15.1,1.2,body);              // headset: band
-  bx(1.4,3.6,3.6,cup,-4.7,11.6,1.5,body);bx(1.4,3.6,3.6,cup,4.7,11.6,1.5,body); // cup
-  bx(.5,.5,4.2,cup,4.9,9.3,3.2,body);bx(1,1,1,black,3.4,9.1,5.6,body);          // mic
-  bx(2,1.6,1,tie,-1.3,8.4,3.7,body);bx(2,1.6,1,tie,1.3,8.4,3.7,body);bx(1,1.2,1.2,tie,0,8.4,3.8,body);
-  bx(1.2,1.2,1.2,dark,0,7.2,-4.2,body);bx(1,1,1,dark,.8,8.3,-4.6,body); // ekor
-  const girlBow=new THREE.Group();body.add(girlBow);
-  bx(2,1.6,1,bow,-1.4,16.2,3,girlBow);bx(2,1.6,1,bow,1.4,16.2,3,girlBow);bx(1,1.2,1.2,M(0xec4899),0,16.2,3,girlBow);
-  const limb=(x,y,z,w,h,d)=>{const g=new THREE.Group();g.position.set(x,y,z);body.add(g);bx(w,h,d,pink,0,-h/2,0,g);bx(w+.1,1,d+.1,dark,0,-h+.5,0,g);return g};
-  const armL=limb(-5,8,0,2,4.5,2),armR=limb(5,8,0,2,4.5,2);
-  const legs=[limb(-2.2,3,2,2.4,3,2.4),limb(2.2,3,2,2.4,3,2.4),limb(-2.2,3,-2,2.4,3,2.4),limb(2.2,3,-2,2.4,3,2.4)];
-  const mug=new THREE.Group();armR.add(mug);mug.position.set(0,-4.3,1.5);mug.visible=false;
-  bx(1.9,2.2,1.9,M(0xf3eefc),0,0,0,mug);bx(1.5,.3,1.5,M(0x6b3f1d),0,1.2,0,mug);bx(.5,1.2,.5,M(0xf3eefc),1.2,0,0,mug);
-  const H=document.getElementById("housewrap")||document.querySelector(".housewrap");
-  const last=new Map();let cw=0,ch=0,frame=0,ready=false;
-  function pose(kind,t,ph,dir){
-    const s=Math.sin(t*8+ph);
-    body.position.y=0;body.rotation.set(0,0,0);armL.rotation.set(0,0,0);armR.rotation.set(0,0,0);legs.forEach(l=>l.rotation.set(0,0,0));
-    if(kind==="walk"){
-      pig.rotation.y=dir*1.15;body.position.y=Math.abs(s)*.8;
-      legs[0].rotation.x=s*.7;legs[3].rotation.x=s*.7;legs[1].rotation.x=-s*.7;legs[2].rotation.x=-s*.7;
-      armL.rotation.x=-s*.6;armR.rotation.x=s*.6;
-    }else if(kind==="type"){
-      pig.rotation.y=Math.sin(t*1.2+ph)*.25;
-      armL.rotation.x=-1.25+Math.sin(t*14+ph)*.22;armR.rotation.x=-1.25+Math.sin(t*14+ph+2)*.22;
-      body.rotation.x=.05;
-    }else if(kind==="alert"){
-      pig.rotation.y=Math.sin(t*30)*.18;body.position.y=Math.abs(Math.sin(t*12))*.6;
-      armL.rotation.z=-1.2+Math.sin(t*14)*.2;armR.rotation.z=1.2-Math.sin(t*14)*.2;
-    }else if(kind==="sip"){
-      pig.rotation.y=Math.sin(t*1.3+ph)*.25;body.rotation.x=-.06;
-      armR.rotation.x=-2.25+Math.sin(t*2.2+ph)*.12;armL.rotation.x=Math.sin(t*2+ph)*.1;
-    }else if(kind==="chat"){
-      pig.rotation.y=Math.sin(t*1.1+ph)*.7+(Math.sin(ph*3)>0?.3:-.3);body.position.y=Math.abs(Math.sin(t*3+ph))*.5;
-      armL.rotation.x=-.4+Math.sin(t*4+ph)*.5;armR.rotation.x=-.6+Math.sin(t*3.3+ph)*.4;
-    }else{ // idle
-      pig.rotation.y=Math.sin(t*1.1+ph)*.55;body.position.y=Math.abs(Math.sin(t*2+ph))*.45;
-      armL.rotation.x=Math.sin(t*2+ph)*.12;armR.rotation.x=-Math.sin(t*2+ph)*.12;
-    }
-  }
-  function loop(ms){
-    requestAnimationFrame(loop);
-    if(document.hidden||(++frame&1))return;
-    const t=ms/1000,box=H.getBoundingClientRect();
-    const w=Math.round(box.width),h=Math.round(box.height);
-    if(w!==cw||h!==ch){cw=w;ch=h;renderer.setSize(w,h,false);}
-    renderer.setScissorTest(false);renderer.setViewport(0,0,w,h);renderer.clear();renderer.setScissorTest(true);
-    document.querySelectorAll(".walker").forEach((el,i)=>{
-      const r=el.getBoundingClientRect();if(!r.width)return;
-      const cx=r.left+r.width/2,prev=last.get(i);last.set(i,cx);
-      const dx=prev==null?0:cx-prev;
-      const mood=(el.className.match(/(working|alert|idle|waiting)/)||[])[1]||"idle";
-      const sitting=!!el.closest(".stage"),kit=!!el.closest(".kslot");
-      let kind="idle",dir=1;
-      if(kit){const ph=(t+i*1.9)%7;kind=ph<2.4?"sip":"chat"}
-      else if(sitting)kind=(mood==="alert"&&!el.closest(".mseat"))?"alert":"type";
-      else if(Math.abs(dx)>.12){kind="walk";dir=dx>0?1:-1;el._dir=dir}
-      else if(el._wk&&el._wk>t-.25){kind="walk";dir=el._dir||1}
-      if(kind==="walk")el._wk=t;
-      cup.color.set(el.dataset.c1||"#38bdf8");tie.color.set(el.dataset.c2||"#0ea5e9");
-      girlBow.visible=el.dataset.girl==="1";mug.visible=el.dataset.mug==="1";
-      eyeM.color.set(mood==="alert"?0xef4444:0x1a1226);
-      pose(kind,t,i*.9,dir);
-      const size=el.closest(".scene")?68:el.closest(".mseat")?78:84,x=cx-box.left-size/2,y=h-((r.bottom-box.top)+8);
-      renderer.setViewport(x,y,size,size);renderer.setScissor(x,y,size,size);
-      renderer.render(scene,cam);
-    });
-    if(!ready){ready=true;document.body.classList.add("three")}
-  }
-  requestAnimationFrame(loop);
 })();
